@@ -1,36 +1,211 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>La Ruleta Familiar — ¿Qué te toca llevar?</title>
-<style>
-*{box-sizing:border-box}body{margin:0;background:#f7f8fc;color:#171717;font-family:Arial,Helvetica,sans-serif}.shell{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:18px}.panel{width:100%;max-width:1220px;background:#d3e4ff;border-radius:20px;padding:42px;display:grid;grid-template-columns:1.18fr 1fr;align-items:center;gap:40px}.wheel-wrap{position:relative;width:100%;max-width:560px;margin:auto}.wheel{display:block;width:100%;height:auto;border:10px solid white;border-radius:50%;box-shadow:0 6px 18px #0002}.arrow{position:absolute;right:-12px;top:50%;transform:translateY(-50%);border-top:18px solid transparent;border-bottom:18px solid transparent;border-right:47px solid #7ac9e9;filter:drop-shadow(0 2px 2px #0002)}.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:white;border:6px solid #f3ebf2;border-radius:50%;width:75px;height:75px;display:grid;place-items:center;color:#b700ae;font-size:38px;pointer-events:none}h1{font-size:clamp(26px,3vw,39px);line-height:1.12;margin:0 0 17px;font-weight:900;letter-spacing:-.7px}p{line-height:1.6}.desc{font-size:15px}.count{display:inline-block;background:#fffd;padding:9px 15px;border-radius:24px;font-weight:bold;font-size:13px;margin:9px 0 18px}label{display:block;font-weight:700;font-size:14px;margin:8px 0 9px}input{width:100%;padding:15px;border:1px solid #c6cbd5;border-radius:9px;font-size:16px;background:white}button{width:100%;margin-top:17px;border:0;border-radius:9px;background:#191919;color:white;padding:16px;font-weight:800;font-size:17px;cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.status{font-size:13px;color:#43516a;min-height:24px;margin:14px 0}.result{display:none;margin-top:15px;padding:23px;text-align:center;background:#fff;border-radius:14px;box-shadow:0 2px 12px #0001}.result h2{margin:0 0 10px;font-size:22px}.result strong{display:block;color:#b000aa;font-size:24px;margin-top:9px;overflow-wrap:anywhere}.small{font-size:12px;color:#506078;margin-top:20px} @media(max-width:800px){.shell{padding:8px;align-items:start}.panel{padding:22px 17px;display:flex;flex-direction:column;gap:22px;min-height:100svh}.wheel-wrap{max-width:440px}.info{width:100%}h1,.desc{text-align:center}.count{display:block;text-align:center}.hub{width:56px;height:56px;font-size:29px}.arrow{border-top-width:14px;border-bottom-width:14px;border-right-width:34px}}
-</style>
-</head><body><div class="shell"><main class="panel">
-<div class="wheel-wrap"><canvas id="wheel" class="wheel" width="760" height="760" aria-label="Ruleta de alimentos"></canvas><div class="arrow"></div><div class="hub">✦</div></div>
-<section class="info"><h1>¡La Ruleta Familiar:<br>¿Qué te toca llevar?</h1><p class="desc">¡Gira la ruleta y el alimento que salga será el que te corresponde llevar! Una vez seleccionado, quedará asignado a ti y no estará disponible para los demás.</p>
-<div class="count" id="count">Conectando…</div><label for="name">¿Cuál es tu nombre completo?</label><input id="name" maxlength="80" autocomplete="name" placeholder="Escribe tu nombre aquí"><button id="spin" disabled>🎡 ¡Girar!</button><div class="status" id="status">Conectando con Firebase…</div><section class="result" id="result"><h2>🎉 ¡FELICIDADES!</h2><div>Te corresponde llevar:</div><strong id="prize"></strong><p>Tu resultado quedó registrado. ¡Gracias por participar!</p></section><p class="small">Una participación por sesión anónima. Las asignaciones quedan guardadas en Firebase y cada alimento solo puede asignarse una vez.</p></section></main></div>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>La Ruleta Familiar — ¿Qué te toca llevar?</title>
+  <style>
+    *{box-sizing:border-box}
+    body{margin:0;background:#f7f8fc;color:#171717;font-family:Arial,Helvetica,sans-serif}
+    .shell{min-height:100svh;display:flex;align-items:center;justify-content:center;padding:18px}
+    .panel{width:100%;max-width:1220px;background:#d3e4ff;border-radius:20px;padding:42px;display:grid;grid-template-columns:1.18fr 1fr;align-items:center;gap:40px}
+    .wheel-wrap{position:relative;width:100%;max-width:560px;margin:auto}
+    .wheel{display:block;width:100%;height:auto;border:10px solid white;border-radius:50%;box-shadow:0 6px 18px #0002}
+    .arrow{position:absolute;right:-12px;top:50%;transform:translateY(-50%);border-top:18px solid transparent;border-bottom:18px solid transparent;border-right:47px solid #7ac9e9;filter:drop-shadow(0 2px 2px #0002)}
+    .hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);background:white;border:6px solid #f3ebf2;border-radius:50%;width:75px;height:75px;display:grid;place-items:center;color:#b700ae;font-size:38px;pointer-events:none}
+    h1{font-size:clamp(26px,3vw,39px);line-height:1.12;margin:0 0 17px;font-weight:900;letter-spacing:-.7px}
+    p{line-height:1.6}.desc{font-size:15px}
+    .count{display:inline-block;background:#ffffffdd;padding:9px 15px;border-radius:24px;font-weight:bold;font-size:13px;margin:9px 0 18px}
+    label{display:block;font-weight:700;font-size:14px;margin:8px 0 9px}
+    input{width:100%;padding:15px;border:1px solid #c6cbd5;border-radius:9px;font-size:16px;background:white}
+    button{width:100%;margin-top:17px;border:0;border-radius:9px;background:#191919;color:white;padding:16px;font-weight:800;font-size:17px;cursor:pointer}
+    button:disabled{opacity:.55;cursor:not-allowed}
+    .status{font-size:13px;color:#43516a;min-height:24px;margin:14px 0;overflow-wrap:anywhere}
+    .result{display:none;margin-top:15px;padding:23px;text-align:center;background:#fff;border-radius:14px;box-shadow:0 2px 12px #0001}
+    .result h2{margin:0 0 10px;font-size:22px}.result strong{display:block;color:#b000aa;font-size:24px;margin-top:9px;overflow-wrap:anywhere}
+    .small{font-size:12px;color:#506078;margin-top:20px}
+    @media(max-width:800px){.shell{padding:8px;align-items:flex-start}.panel{padding:22px 17px;display:flex;flex-direction:column;gap:22px;min-height:100svh}.wheel-wrap{max-width:440px}.info{width:100%}h1,.desc{text-align:center}.count{display:block;text-align:center}.hub{width:56px;height:56px;font-size:29px}.arrow{border-top-width:14px;border-bottom-width:14px;border-right-width:34px}}
+  </style>
+</head>
+<body>
+  <div class="shell"><main class="panel">
+    <div class="wheel-wrap"><canvas id="wheel" class="wheel" width="760" height="760" aria-label="Ruleta de alimentos"></canvas><div class="arrow"></div><div class="hub">✦</div></div>
+    <section class="info">
+      <h1>¡La Ruleta Familiar:<br>¿Qué te toca llevar?</h1>
+      <p class="desc">¡Gira la ruleta y el alimento que salga será el que te corresponde llevar! Una vez seleccionado, quedará asignado a ti y no estará disponible para los demás.</p>
+      <div class="count" id="count">Conectando…</div>
+      <label for="name">¿Cuál es tu nombre completo?</label>
+      <input id="name" maxlength="80" autocomplete="name" placeholder="Escribe tu nombre aquí">
+      <button id="spin" disabled>🎡 ¡Girar!</button>
+      <div class="status" id="status" role="status" aria-live="polite">Conectando con Firebase…</div>
+      <section class="result" id="result" aria-live="polite"><h2>🎉 ¡FELICIDADES!</h2><div>Te corresponde llevar:</div><strong id="prize"></strong><p>Tu resultado quedó registrado. ¡Gracias por participar!</p></section>
+      <p class="small">Una participación por cuenta anónima de este navegador. Los alimentos asignados no volverán a salir. Para evitar trampas usando otro dispositivo haría falta identificación adicional.</p>
+    </section>
+  </main></div>
+
 <script type="module">
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js';
 import {getAuth,signInAnonymously,onAuthStateChanged} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js';
 import {getFirestore,doc,collection,onSnapshot,getDoc,runTransaction,serverTimestamp} from 'https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js';
-const firebaseConfig={
- apiKey:'AIzaSyDC462dlO7bfzQBDGZ5CoWin08KgLv3Upg',
- authDomain:'ruleta-familiar-fbc0e.firebaseapp.com',
- projectId:'ruleta-familiar-fbc0e',
- storageBucket:'ruleta-familiar-fbc0e.firebasestorage.app',
- messagingSenderId:'618620333896',
- appId:'1:618620333896:web:fd00dfecd5469985474d7d'
+
+// IMPORTANTE: Esta es la configuración de tu proyecto web de Firebase.
+// En la clave hay numeros 1 y 0, NO letras l y O: ...462d107...
+// Si Firebase sigue rechazandola, comparala con la clave copiada
+// directamente desde Firebase > Configuracion del proyecto > Tus apps.
+const firebaseConfig = {
+  apiKey: 'AIzaSyDC462d107bfzQBDGZ5CoWin08KgLv3Upg',
+  authDomain: 'ruleta-familiar-fbc0e.firebaseapp.com',
+  projectId: 'ruleta-familiar-fbc0e',
+  storageBucket: 'ruleta-familiar-fbc0e.firebasestorage.app',
+  messagingSenderId: '618620333896',
+  appId: '1:618620333896:web:fd00dfecd5469985474d7d',
+  measurementId: 'G-G0CEG5Q3XX'
 };
-const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
-const el=id=>document.getElementById(id),canvas=el('wheel'),ctx=canvas.getContext('2d');
-const colors=['#ec4285','#ad38b7','#6454c6','#318fdf','#1ca9c5','#23a88e','#87c84c','#c8df4b','#ffe857','#ffbf43','#ff951b','#f25455'];
-let options=[],ready=false,spinning=false,finished=false,angle=0,uid=null,unsubscribe=null;
-function setStatus(s){el('status').textContent=s}
-function paint(list=options){ctx.clearRect(0,0,760,760);const center=380,r=370,n=list.length;if(!n){ctx.beginPath();ctx.arc(center,center,r,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.fillStyle='#333';ctx.font='bold 27px Arial';ctx.textAlign='center';ctx.fillText('Sin opciones disponibles',center,center);return}let arc=Math.PI*2/n;list.forEach((it,i)=>{let a=i*arc;ctx.beginPath();ctx.moveTo(center,center);ctx.arc(center,center,r,a-arc/2,a+arc/2);ctx.closePath();ctx.fillStyle=colors[i%colors.length];ctx.fill();ctx.strokeStyle='#ffffff66';ctx.lineWidth=2;ctx.stroke();ctx.save();ctx.translate(center,center);ctx.rotate(a);ctx.translate(r*.61,0);if(Math.cos(a)<0)ctx.rotate(Math.PI);ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillStyle=[7,8,9].includes(i%colors.length)?'#222':'white';ctx.font=`bold ${n>=18?21:n>=10?26:32}px Arial`;let t=it.nombre.length>25?it.nombre.slice(0,22)+'…':it.nombre;ctx.fillText(t,0,0,r*.77);ctx.restore()})}
-function showResult(nombre,repeat=false){finished=true;spinning=false;el('name').disabled=true;el('spin').disabled=true;el('spin').textContent='✓ Ya participaste';el('prize').textContent=nombre;el('result').style.display='block';setStatus(repeat?'Este dispositivo ya tenía una asignación.':'Tu resultado quedó registrado correctamente.');setTimeout(()=>{canvas.style.transition='none';canvas.style.transform='none';angle=0;paint()},1500)}
-async function connect(user){uid=user.uid;try{const participant=await getDoc(doc(db,'participantes',uid));if(participant.exists()){const data=participant.data(); const id=String(data.alimentoId); const prize=await getDoc(doc(db,'alimentos',id));showResult(prize.exists()?prize.data().nombre:'Alimento número '+id,true)}unsubscribe=onSnapshot(collection(db,'alimentos'),snapshot=>{options=snapshot.docs.filter(d=>d.data().asignadoA==null).map(d=>({id:d.id,nombre:d.data().nombre||'Alimento'})).sort((a,b)=>Number(a.id)-Number(b.id));el('count').textContent=options.length+' opciones disponibles';ready=true;if(!spinning)paint();if(!finished&&!spinning){el('spin').disabled=!options.length;setStatus(options.length?'Escribe tu nombre para participar.':'Todos los alimentos ya fueron asignados.')}},err=>{ready=false;el('spin').disabled=true;setStatus('Error al consultar alimentos: '+err.message)});}catch(err){setStatus('No se pudo cargar la participación: '+err.message)}}
-onAuthStateChanged(auth,user=>{if(user){if(!uid)connect(user)}else{signInAnonymously(auth).catch(err=>{setStatus('Error al iniciar sesión anónima: '+err.message)})}});
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const el = id => document.getElementById(id);
+const canvas = el('wheel');
+const ctx = canvas.getContext('2d');
+const colors = ['#ec4285','#ad38b7','#6454c6','#318fdf','#1ca9c5','#23a88e','#87c84c','#c8df4b','#ffe857','#ffbf43','#ff951b','#f25455'];
+let options = [], ready = false, spinning = false, finished = false;
+let angle = 0, uid = null, unsubscribe = null;
+let frozenOptions = null;
+
+function setStatus(message) { el('status').textContent = message; }
+
+function paint(list = options) {
+  ctx.clearRect(0, 0, 760, 760);
+  const center = 380, r = 370, n = list.length;
+  if (!n) {
+    ctx.beginPath(); ctx.arc(center,center,r,0,Math.PI*2);
+    ctx.fillStyle='#fff';ctx.fill();
+    ctx.fillStyle='#333';ctx.font='bold 27px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('Sin opciones disponibles',center,center,620);
+    return;
+  }
+  const arc = Math.PI*2/n;
+  list.forEach((it,i)=>{
+    const a=i*arc;
+    ctx.beginPath();ctx.moveTo(center,center);
+    ctx.arc(center,center,r,a-arc/2,a+arc/2);ctx.closePath();
+    ctx.fillStyle=colors[i%colors.length];ctx.fill();
+    ctx.strokeStyle='#ffffff66';ctx.lineWidth=2;ctx.stroke();
+    ctx.save();ctx.translate(center,center);ctx.rotate(a);ctx.translate(r*.61,0);
+    if(Math.cos(a)<0)ctx.rotate(Math.PI);
+    ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillStyle=[7,8,9].includes(i%colors.length)?'#222':'white';
+    ctx.font=`bold ${n>=18?21:n>=10?26:32}px Arial`;
+    const label=it.nombre.length>25?it.nombre.slice(0,22)+'…':it.nombre;
+    ctx.fillText(label,0,0,r*.77);ctx.restore();
+  });
+}
+
+function showResult(nombre, repeated=false) {
+  finished=true;spinning=false;
+  el('name').disabled=true;el('spin').disabled=true;
+  el('spin').textContent='✓ Ya participaste';
+  el('prize').textContent=nombre;el('result').style.display='block';
+  setStatus(repeated?'Esta cuenta anónima ya tenía una asignación.':'Tu resultado quedó registrado correctamente.');
+  setTimeout(()=>{
+    canvas.style.transition='none';canvas.style.transform='none';angle=0;
+    paint();
+  },1500);
+}
+
+async function connect(user) {
+  uid=user.uid;
+  try {
+    // Primero comprobar el resultado de una visita anterior.
+    const participant=await getDoc(doc(db,'participantes',uid));
+    if(participant.exists()) {
+      const data=participant.data();
+      const id=String(data.alimentoId);
+      const prize=await getDoc(doc(db,'alimentos',id));
+      showResult(prize.exists()?String(prize.data().nombre):'Alimento número '+id,true);
+    }
+    unsubscribe=onSnapshot(collection(db,'alimentos'),snapshot=>{
+      options=snapshot.docs
+        .filter(d=>d.data().asignadoA===null)
+        .map(d=>({id:d.id,nombre:String(d.data().nombre||'Alimento')}))
+        .sort((a,b)=>Number(a.id)-Number(b.id));
+      el('count').textContent=options.length+' opciones disponibles';
+      ready=true;
+      if(!spinning)paint();
+      if(!finished&&!spinning){
+        el('spin').disabled=!options.length;
+        setStatus(options.length?'Escribe tu nombre para participar.':'Todos los alimentos ya fueron asignados.');
+      }
+    },err=>{
+      ready=false;el('spin').disabled=true;
+      setStatus('Error al consultar alimentos: '+err.message);
+    });
+  } catch(err) {
+    setStatus('No se pudo cargar la participación: '+err.message);
+  }
+}
+
+onAuthStateChanged(auth,user=>{
+  if(user) {
+    if(!uid)connect(user);
+  } else {
+    signInAnonymously(auth).catch(err=>{
+      if(err.code==='auth/invalid-api-key'){
+        setStatus('Firebase rechazó la clave API. Revisa el valor apiKey en Firebase y las restricciones de la clave en Google Cloud.');
+      }else{
+        setStatus('Error al iniciar sesión anónima ('+err.code+'): '+err.message);
+      }
+    });
+  }
+});
 paint();
-el('spin').addEventListener('click',async()=>{if(!uid||!ready||spinning||finished)return;let name=el('name').value.trim().replace(/\s+/g,' ');if(name.length<3||name.length>80){alert('Escribe tu nombre completo.');return}spinning=true;el('spin').disabled=true;el('name').disabled=true;setStatus('Asignando y guardando tu alimento…');let frozen=options.slice();try{const result=await runTransaction(db,async tx=>{const participantRef=doc(db,'participantes',uid);const prev=await tx.get(participantRef);if(prev.exists())return {id:String(prev.data().alimentoId),repeated:true};const refs=Array.from({length:22},(_,i)=>doc(db,'alimentos',String(i+1)));const snaps=[];for(const ref of refs)snaps.push(await tx.get(ref));const free=snaps.filter(s=>s.exists()&&s.data().asignadoA===null);if(!free.length)throw new Error('Ya no quedan alimentos disponibles.');const pick=free[Math.floor(Math.random()*free.length)];tx.update(pick.ref,{asignadoA:uid});tx.set(participantRef,{nombre:name,alimentoId:pick.id,fecha:serverTimestamp()});return {id:pick.id,nombre:pick.data().nombre,repeated:false}});if(result.repeated){let record=await getDoc(doc(db,'alimentos',result.id));showResult(record.exists()?record.data().nombre:'Alimento '+result.id,true);return}let ix=frozen.findIndex(a=>a.id===result.id);if(ix<0){showResult(result.nombre);return}let turn=Math.PI*2,dest=-ix*turn/frozen.length,now=((angle%turn)+turn)%turn,delta=((dest-now)%turn+turn)%turn;angle+=turn*6+delta;canvas.style.transition='transform 5s cubic-bezier(.12,.72,.12,1)';canvas.style.transform=`rotate(${angle}rad)`;setStatus('🎡 ¡La ruleta está girando!');setTimeout(()=>showResult(result.nombre),5100)}catch(err){spinning=false;el('name').disabled=false;el('spin').disabled=!ready||!options.length;setStatus('No se pudo completar el giro: '+err.message)}});
-</script></body></html>
+
+el('spin').addEventListener('click',async()=>{
+  if(!uid||!ready||spinning||finished)return;
+  const name=el('name').value.trim().replace(/\s+/g,' ');
+  if(name.length<3||name.length>80){alert('Escribe tu nombre completo.');return;}
+  spinning=true;el('spin').disabled=true;el('name').disabled=true;
+  setStatus('Asignando y guardando tu alimento…');
+  // Congelar visualmente la ruleta durante la animación.
+  const frozen=options.slice();
+  try {
+    const result=await runTransaction(db,async tx=>{
+      const participantRef=doc(db,'participantes',uid);
+      const prev=await tx.get(participantRef);
+      if(prev.exists())return {id:String(prev.data().alimentoId),repeated:true};
+      const refs=Array.from({length:22},(_,i)=>doc(db,'alimentos',String(i+1)));
+      const snaps=[];
+      for(const ref of refs)snaps.push(await tx.get(ref));
+      const free=snaps.filter(s=>s.exists()&&s.data().asignadoA===null);
+      if(!free.length)throw new Error('Ya no quedan alimentos disponibles.');
+      const pick=free[Math.floor(Math.random()*free.length)];
+      tx.update(pick.ref,{asignadoA:uid});
+      tx.set(participantRef,{nombre:name,alimentoId:pick.id,fecha:serverTimestamp()});
+      return {id:pick.id,nombre:String(pick.data().nombre),repeated:false};
+    });
+    if(result.repeated){
+      const docResult=await getDoc(doc(db,'alimentos',result.id));
+      showResult(docResult.exists()?String(docResult.data().nombre):'Alimento '+result.id,true);
+      return;
+    }
+    const ix=frozen.findIndex(a=>a.id===result.id);
+    if(ix<0){showResult(result.nombre);return;}
+    const turn=Math.PI*2;
+    const dest=-ix*turn/frozen.length;
+    const now=((angle%turn)+turn)%turn;
+    const delta=((dest-now)%turn+turn)%turn;
+    angle+=turn*6+delta;
+    canvas.style.transition='transform 5s cubic-bezier(.12,.72,.12,1)';
+    canvas.style.transform=`rotate(${angle}rad)`;
+    setStatus('🎡 ¡La ruleta está girando!');
+    setTimeout(()=>showResult(result.nombre),5100);
+  }catch(err){
+    spinning=false;el('name').disabled=false;
+    el('spin').disabled=!ready||!options.length;
+    setStatus('No se pudo completar el giro: '+err.message);
+  }
+});
+</script>
+</body>
+</html>
